@@ -29,10 +29,20 @@ let x n = "x" ^ string_of_int n
   Par exemple, str_of_term (Var 3) retourne "x3", str_of_term (Add
    (Var 1, Const 3)) retourne "(+ x1 3)" et str_of_test (Equals (Var
    2, Const 2)) retourne "(= x2 2)".  *)
-let rec str_of_term t = "TODO" (* À compléter *)
 
-let str_of_test t = "TODO" (* À compléter *)
+   let rec str_of_term t = 
+  match t with 
+  | Const c -> string_of_int c
+  | Var v  ->  x v
+  | Add (t1, t2) -> "(+ " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
+  | Mult(t1, t2) -> "(x " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
+    
 
+let rec str_of_test t = 
+  match t with 
+  | Equals (t1, t2) -> "(= " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^")"
+  | LessThan(t1, t2) -> "(<" ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
+        
 let string_repeat s n =
   Array.fold_left (^) "" (Array.make n s)
 
