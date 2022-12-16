@@ -1,0 +1,82 @@
+           Mini-projet 2 : Synthèse d'invariant en SMT-LIB
+                            fichier RENDU
+                     (à remplir obligatoirement)
+
+**Un mini-projet sans fichier RENDU rempli ne recevra pas de note.**
+
+Date limite: 19 décembre 2022
+
+Identité
+--------
+Nombre de binôme: **à remplir**
+Nom, prénom 1: **à remplir**
+Nom, prénom 2: **à remplir**
+
+
+Questions sur votre code
+------------------------
+
+** Exercice 2 **
+
+0. Avez-vous testé que `make invariants` s'exécute sans erreurs ou
+   warnings, puis que `./invariants` produit une sortie au format
+   SMT-LIB, et enfin que cette sortie est acceptée par Z3 ?
+
+**à remplir** 
+
+---
+
+1. Le type `term` est un type récursif : quel type de fonction est-il
+   naturel d'utiliser ? Quels sont vos cas de base et quelle quantité
+   strictement décroissante au cours des appels successifs vous assure
+   la terminaison ?
+   
+
+**à remplir**
+
+---
+
+2. Pour l'implémentation de `str_condition`, quelles sont les
+   fonctions auxiliaires que vous avez utilisées et/ou écrites ? (Par
+   une fonction auxiliaire, on entend ici soit une fonction d'une
+   bibliothèque, par exemple des fonctions comme `List.length` ou
+   `List.rev_append`, ou une fonction `aux_str_condition` que vous
+   avez écrite vous-mêmes.) Expliquez en quelques phrases en français
+   comment ces fonctions auxiliaires sont utilisées dans votre
+   implémentation de la fonction `str_condition`.
+   
+**à remplir**
+
+---
+
+3. Pour l'implémentation de `str_assert_forall`, quelles sont les
+   fonctions auxiliaires que vous avez utilisées et/ou écrites ?
+   Expliquez en quelques phrases en français comment ces fonctions
+   auxiliaires sont utilisées dans votre implémentation de la fonction
+   `str_assert_forall`.
+   
+**à remplir**   
+   
+---
+
+4. Le langage de programmation WA suppose que les mises à jour des
+   variables `x1`, ..., `xk` sont simultanées : par exemple, si `x1`
+   vaut `1` et x2 vaut `1`, exécuter
+
+   x1 = x2 + 1;
+   x2 = x1 + 1;
+
+   résulte en `x1` valant `2` et `x2` valant `2`. En Java, les mises à
+   jour sont séquentielles et le résultat serait que `x1` vaudrait `2`
+   et `x2` vaudrait `3`. Expliquez en français comment modifier le
+   code pour construite un programme SMT-LIB plus proche de la façon
+   dont les variables sont mises à jour en Java.
+
+**à remplir**
+
+---
+5. Avez-vous d'autres remarques sur votre rendu ? (question optionnelle)
+
+**à remplir**
+
+
