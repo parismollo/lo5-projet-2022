@@ -52,7 +52,16 @@ let string_repeat s n =
    l'invariant.  Par exemple, str_condition [Var 1; Const 10] retourne 
    "(Inv x1 10)".
    *)
-let str_condition l = "TODO" (* À compléter *)
+let str_condition l = 
+  let tab = List.map (fun x-> str_of_term x) l in
+  let rec loop tab res counter =
+    if counter > List.length tab then
+      res 
+    else if counter = List.length tab then
+      res^")"
+    else 
+      loop tab (res^" "^(List.nth tab counter)) (counter+1) in
+  loop tab "(Inv" 0
 
 (* Question 3. Écrire une fonction 
    `str_assert_for_all : int -> string -> string` qui prend en
