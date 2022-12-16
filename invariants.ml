@@ -72,10 +72,24 @@ let str_condition l =
   Par exemple, str_assert_forall 2 "< x1 x2" retourne : "(assert
    (forall ((x1 Int) (x2 Int)) (< x1 x2)))".  *)
 
-let str_assert s = "(assert " ^ s ^ ")"
+let str_assert s = "(assert " ^ s ^")";;
 
-let str_assert_forall n s = "TODO" (* À compléter *)
+let create_variable n = 
+  "(x"^string_of_int(n)^" Int)"
+  
+let create_variables n = 
+  let rec loop result counter =
+    if counter >= n then result
+    else 
+    if counter = 0 then loop (result^(create_variable counter)) (counter+1)
+    else loop (result^" "^(create_variable counter)) (counter+1) 
+  in loop "(" 0;;
+  
 
+let str_assert_forall n s = 
+  "(assert\n(forall "^(create_variables n) ^" "^"("^s^")))"
+
+   
 (* Question 4. Nous donnons ci-dessous une définition possible de la
    fonction smt_lib_of_wa. Complétez-la en écrivant les définitions de
    loop_condition et assertion_condition. *)
