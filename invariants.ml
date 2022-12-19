@@ -30,15 +30,22 @@ let x n = "x" ^ string_of_int n
    (Var 1, Const 3)) retourne "(+ x1 3)" et str_of_test (Equals (Var
    2, Const 2)) retourne "(= x2 2)".  *)
 
-   let rec str_of_term t = 
+let rec str_of_term t = 
+  (* Cette fonction fait un match with avec le paramètre t *)
   match t with 
+  (* Si t est du type const, renvoie c (en String) - terminaison*)
   | Const c -> string_of_int c
+  (* Si t est du type var, e.g 5 on renvoie x5  - terminaison*)
   | Var v  ->  x v
+  (* Sinon, pour add et mult on renvoie (+ t1 t2) de façon recursive car
+    on peut avoir dans t1 et t2 des termes qui contiennent de termes et ainsi de suite*)
   | Add (t1, t2) -> "(+ " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
   | Mult(t1, t2) -> "(x " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
     
 
 let rec str_of_test t = 
+  (* Convertion d'un type Equals ou LessThan dans un String, en utilisant du matching et de
+    la méthode récursive str_of_term*)
   match t with 
   | Equals (t1, t2) -> "(= " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^")"
   | LessThan(t1, t2) -> "(<" ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
@@ -53,13 +60,19 @@ let string_repeat s n =
    "(Inv x1 10)".
    *)
 let str_condition l = 
+  (* Dans un premier temps, ici on va creer un tab qui contient le contenu de l
+    au format termes e.g. l = [Var 1, Const 10] devient ["x1", "10"] *)
   let tab = List.map (fun x-> str_of_term x) l in
+  (* Ensuite on va ajouter dans une string chaque element de tab avec de la recursion *)
   let rec loop tab res counter =
     if counter > List.length tab then
+      (* si tab est fini, on renvoie la string finale *)
       res 
     else if counter = List.length tab then
+      (* si c'est le dernier element on doit fermer le parenthèse *)
       res^")"
     else 
+      (* sinon on continue la recursivité avec le prochain element du tableau *)
       loop tab (res^" "^(List.nth tab counter)) (counter+1) in
   loop tab "(Inv" 0
 
@@ -72,22 +85,30 @@ let str_condition l =
   Par exemple, str_assert_forall 2 "< x1 x2" retourne : "(assert
    (forall ((x1 Int) (x2 Int)) (< x1 x2)))".  *)
 
-let str_assert s = "(assert " ^ s ^")";;
+let str_assert s = "(assert " ^ s ^")"
 
 let create_variable n = 
+  (* Ici, nous avons une methode auxiliaire, qui creer pour le int n
+    son paremètre du type (x_n Int) *)
   "(x"^string_of_int(n)^" Int)"
   
 let create_variables n = 
+  (* Ici on va creer l'ensemble des paramètres (x_1 Int) ... (x_n Int) *)
+  (* Pour cela on utilise d'un fonction recursive auxiliaire loop et de la
+    méthode create_variable *)
   let rec loop result counter =
     if counter >= n then result
-    else 
+    else
+    (* Appel récursive sans space au début (premier appel) *) 
     if counter = 0 then loop (result^(create_variable counter)) (counter+1)
+    (* Appel récursive avec space au début *)
     else loop (result^" "^(create_variable counter)) (counter+1) 
-  in loop "(" 0;;
+  in loop "(" 0
   
 
 let str_assert_forall n s = 
-  "(assert\n(forall "^(create_variables n) ^" "^"("^s^")))"
+  (* Concatenation de toutes composantes d'un assert forall (create_variables) *)
+  "(assert(forall "^(create_variables n) ^" "^"("^s^")))"
 
    
 (* Question 4. Nous donnons ci-dessous une définition possible de la

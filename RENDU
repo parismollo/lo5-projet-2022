@@ -8,9 +8,9 @@ Date limite: 19 décembre 2022
 
 Identité
 --------
-Nombre de binôme: **à remplir**
-Nom, prénom 1: **à remplir**
-Nom, prénom 2: **à remplir**
+Nombre de binôme: Binôme 11
+Nom, prénom 1: MOLLO CHRISTONDIS, FELIPE PARIS
+Nom, prénom 2: POSTOLACHI, MARIN 
 
 
 Questions sur votre code
@@ -18,12 +18,18 @@ Questions sur votre code
 
 ** Exercice 2 **
 
-0. Avez-vous testé que `make invariants` s'exécute sans erreurs ou
+1. Avez-vous testé que `make invariants` s'exécute sans erreurs ou
    warnings, puis que `./invariants` produit une sortie au format
    SMT-LIB, et enfin que cette sortie est acceptée par Z3 ?
 
-**à remplir** 
+La commande `make invariants` s'exécute sans erreur.
+```bash
+paris@paris-pc:~/Documents/UniversiteParis/L3/Projects/lo5-projet-2022$ make
+ocamlfind ocamlopt -o invariants -linkpkg invariants.ml
+paris@paris-pc:~/Documents/UniversiteParis/L3/Projects/lo5-projet-2022$ 
 
+```
+<!-- TODO -->
 ---
 
 1. Le type `term` est un type récursif : quel type de fonction est-il
@@ -31,12 +37,27 @@ Questions sur votre code
    strictement décroissante au cours des appels successifs vous assure
    la terminaison ?
    
+Comme défini dans le fichier `invariants.ml`, le type `term` a quatre définitions possibles. Deux d'entre eux étant des définitions récursives (Add, et Mult) car ils contiennent des "termes" dans leurs définition, tandis que Var et Const ne sont composés que d'un int. Donc, pour la fonction str_of_term nous avons utilisé d'un `match with` cela nous a permis de faire un appel récursive pour les termes du type `Add` et `Mult` et ensuite d'assurer la terminaison avec les types `Var` et `Const`
 
-**à remplir**
+
+```ocaml
+let rec str_of_term t = 
+  (* Cette fonction fait un match with avec le paramètre t *)
+  match t with 
+  (* Si t est du type const, renvoie c (en String) - terminaison*)
+  | Const c -> string_of_int c
+  (* Si t est du type var, e.g 5 on renvoie x5  - terminaison*)
+  | Var v  ->  x v
+  (* Sinon, pour add et mult on renvoie (+ t1 t2) de façon recursive car
+    on peut avoir dans t1 et t2 des termes qui contiennent de termes et ainsi de suite*)
+  | Add (t1, t2) -> "(+ " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
+  | Mult(t1, t2) -> "(x " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
+
+```
 
 ---
 
-2. Pour l'implémentation de `str_condition`, quelles sont les
+1. Pour l'implémentation de `str_condition`, quelles sont les
    fonctions auxiliaires que vous avez utilisées et/ou écrites ? (Par
    une fonction auxiliaire, on entend ici soit une fonction d'une
    bibliothèque, par exemple des fonctions comme `List.length` ou
@@ -45,7 +66,11 @@ Questions sur votre code
    comment ces fonctions auxiliaires sont utilisées dans votre
    implémentation de la fonction `str_condition`.
    
-**à remplir**
+Pour l'implémentation de `str_condition` nous avons utilisé de fonctions auxiliaires suivantes: 
+
+1) `List.map`: Pour convertir chaque élément du tableau l, nous appliquons une méthode `str_of_term` à chaque élément avec la méthode `List.map` et le stockons dans une variable pour ensuite être analysé.
+2) `rec loop`: Nous avons écrit une méthode récursive auxiliaire, qui doit parcourir le tableau `tab`, résultat de la partie 1. Cette fonction sera responsable pour concaténer les éléments du tableau tab dans un seul string.
+3) Dans la méthode auxiliaire `loop` nous avons utilisé de la méthode `List.length` et `List.nth` pour respectivement, savoir la taille du tableau et de retrouver le premier élément du tableau, tout cela utilisé dans la création de la string.
 
 ---
 
@@ -55,11 +80,14 @@ Questions sur votre code
    auxiliaires sont utilisées dans votre implémentation de la fonction
    `str_assert_forall`.
    
-**à remplir**   
+1) `create_variable n`: Ce méthode renvoie un String du format (x_n Int) pour un n donné.
+2) `create_variables n`: Pour un ensemble de paramètres de taille `n`, cette méthode renvoie un String avec toutes les paramètres, e.g `(x1 Int) . . . (xn Int)`. Cette méthode utilise de la méthode auxilaire `create_variable`
+3) `str_assert_forall n s`: Finalise le processus avec la concaténation de `assert`, `forall`, les paramètres (`create_variables n`) et finalement la string `s`.
+  
    
 ---
 
-4. Le langage de programmation WA suppose que les mises à jour des
+1. Le langage de programmation WA suppose que les mises à jour des
    variables `x1`, ..., `xk` sont simultanées : par exemple, si `x1`
    vaut `1` et x2 vaut `1`, exécuter
 
@@ -75,8 +103,5 @@ Questions sur votre code
 **à remplir**
 
 ---
-5. Avez-vous d'autres remarques sur votre rendu ? (question optionnelle)
-
-**à remplir**
 
 
