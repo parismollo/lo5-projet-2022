@@ -18,7 +18,7 @@ Questions sur votre code
 
 ** Exercice 2 **
 
-1. Avez-vous testé que `make invariants` s'exécute sans erreurs ou
+0. Avez-vous testé que `make invariants` s'exécute sans erreurs ou
    warnings, puis que `./invariants` produit une sortie au format
    SMT-LIB, et enfin que cette sortie est acceptée par Z3 ?
 
@@ -57,7 +57,7 @@ let rec str_of_term t =
 
 ---
 
-1. Pour l'implémentation de `str_condition`, quelles sont les
+2. Pour l'implémentation de `str_condition`, quelles sont les
    fonctions auxiliaires que vous avez utilisées et/ou écrites ? (Par
    une fonction auxiliaire, on entend ici soit une fonction d'une
    bibliothèque, par exemple des fonctions comme `List.length` ou
@@ -87,7 +87,7 @@ Pour l'implémentation de `str_condition` nous avons utilisé de fonctions auxil
    
 ---
 
-1. Le langage de programmation WA suppose que les mises à jour des
+4. Le langage de programmation WA suppose que les mises à jour des
    variables `x1`, ..., `xk` sont simultanées : par exemple, si `x1`
    vaut `1` et x2 vaut `1`, exécuter
 

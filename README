@@ -47,6 +47,7 @@ Consignes
 Écrire un fichier SMT-LIB `invariants.smt2` qui, lorsqu'il est donné à
 Z3, trouve un invariant de boucle pour le programme Java suivant :
 
+```java
 int i = 0;
 int v = 0;
 while (i < 3) {
@@ -54,13 +55,14 @@ while (i < 3) {
     i = i + 1;
 }
 assert v == 9;
-
+```
 
 ** Exercice 2 **
 
 Nous définissons un langage de programmation « WA » (While-Assert),
 qui modélise des programmes Java de la forme générale suivante :
 
+```java
 int x1 = a1;
 // (...)
 int xk = ak;
@@ -70,6 +72,7 @@ while (s) {
     xk = bk;
 }
 assert (t);
+```
 
 Plus formellement, un _programme WA_ est défini comme un uplet `(k,
 a1, ..., ak, b1, ..., bk, s, t)`, où `k` est un entier représentant le

@@ -48,7 +48,12 @@ let rec str_of_test t =
     la méthode récursive str_of_term*)
   match t with 
   | Equals (t1, t2) -> "(= " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^")"
-  | LessThan(t1, t2) -> "(<" ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
+  | LessThan(t1, t2) -> "(< " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
+
+let rec contraire t = 
+  match t with 
+  | Equals (t1, t2) -> "(not (" ^ str_of_term t1 ^ " " ^ str_of_term t2 ^"))"
+  | LessThan(t1, t2) -> "(>= " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
         
 let string_repeat s n =
   Array.fold_left (^) "" (Array.make n s)
@@ -59,6 +64,27 @@ let string_repeat s n =
    l'invariant.  Par exemple, str_condition [Var 1; Const 10] retourne 
    "(Inv x1 10)".
    *)
+
+let create_tab_var n = 
+  let rec loop n res = 
+    match n with
+    | 0 -> res
+    | _ -> loop (n-1) ((Var n) :: res) 
+  in loop n [];;
+
+let create_tab_const n = 
+  let rec loop n res = 
+    match n with
+    | 0 -> res
+    | _ -> loop (n-1) ((Const n) :: res)
+  in loop n [];;
+
+let create_tab_of_term term size = 
+  match term with
+  |Var x -> create_tab_var size
+  |Const x -> create_tab_const size
+  | _  -> failwith "not valid term"
+
 let str_condition l = 
   (* Dans un premier temps, ici on va creer un tab qui contient le contenu de l
     au format termes e.g. l = [Var 1, Const 10] devient ["x1", "10"] *)
@@ -74,7 +100,7 @@ let str_condition l =
     else 
       (* sinon on continue la recursivité avec le prochain element du tableau *)
       loop tab (res^" "^(List.nth tab counter)) (counter+1) in
-  loop tab "(Inv" 0
+  loop tab "(Invar" 0
 
 (* Question 3. Écrire une fonction 
    `str_assert_for_all : int -> string -> string` qui prend en
@@ -97,18 +123,18 @@ let create_variables n =
   (* Pour cela on utilise d'un fonction recursive auxiliaire loop et de la
     méthode create_variable *)
   let rec loop result counter =
-    if counter >= n then result
+    if counter > n then result
     else
     (* Appel récursive sans space au début (premier appel) *) 
-    if counter = 0 then loop (result^(create_variable counter)) (counter+1)
+    if counter = 1 then loop (result^(create_variable counter)) (counter+1)
     (* Appel récursive avec space au début *)
     else loop (result^" "^(create_variable counter)) (counter+1) 
-  in loop "(" 0
+  in loop "(" 1
   
 
 let str_assert_forall n s = 
   (* Concatenation de toutes composantes d'un assert forall (create_variables) *)
-  "(assert(forall "^(create_variables n) ^" "^"("^s^")))"
+  "(assert (forall "^(create_variables n) ^") "^"("^s^")))"
 
    
 (* Question 4. Nous donnons ci-dessous une définition possible de la
@@ -122,13 +148,15 @@ let smtlib_of_wa p =
     ^"(declare-fun Invar (" ^ string_repeat "Int " n ^  ") Bool)" in
   let loop_condition p =
     "; la relation Invar est un invariant de boucle\n"
-    ^"TODO" (* À compléter *) in
+    ^str_assert_forall (p.nvars) ("\n=> (and "^str_condition(create_tab_var(p.nvars))^" "
+    ^str_of_test(p.loopcond)^") "^str_condition(p.mods)) in
   let initial_condition p =
     "; la relation Invar est vraie initialement\n"
     ^str_assert (str_condition p.inits) in
   let assertion_condition p =
     "; l'assertion finale est vérifiée\n"
-    ^"TODO" (* À compléter *) in
+    ^str_assert_forall (p.nvars) ("\n => (and "^str_condition(create_tab_var(p.nvars))^" "^contraire(p.loopcond)^") "^str_of_test(p.assertion)) 
+  in
   let call_solver =
     "; appel au solveur\n(check-sat-using (then qe smt))\n(get-model)\n(exit)\n" in
   String.concat "\n" [declare_invariant p.nvars;
@@ -152,4 +180,29 @@ let () = Printf.printf "%s" (smtlib_of_wa p1)
    un autre programme test, et vérifiez qu'il donne un fichier SMTLIB
    de la forme attendue. *)
 
-let p2 = None (* À compléter *)
+
+(* 
+
+example du cours - page 133.
+(declare-fun Invar (Int Int) Bool)
+; équation (61) : la relation Invar est un invariant de boucle
+(assert (forall (( x Int ) ( y Int ))
+(=> (and (Invar x y) (< x 10)) (Invar (+ x 2) (+ y 1)))))
+; équation (62) : la relation Invar est vraie initialement
+(assert (Invar 0 1))
+; équation (63) : l'assertion finale est vérifiée
+(assert (forall (( x Int ) ( y Int ))
+(=> (and (Invar x y) (>= x 10)) (< y 10))))
+; appel au solveur
+(check-sat-using (then qe smt))
+(get-model)
+(exit) 
+*)
+
+let p2 =  {nvars = 2;
+  loopcond = LessThan ((Var 1),(Const 10));
+  mods = [Add ((Var 1), (Const 2)); Add ((Var 2), (Const 1))];
+  inits = [(Const 0) ; (Const 1)];
+  assertion = LessThan ((Var 2),(Const 10))}
+
+let () = Printf.printf "\n\n%s" (smtlib_of_wa p2)
