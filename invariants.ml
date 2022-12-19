@@ -51,6 +51,9 @@ let rec str_of_test t =
   | LessThan(t1, t2) -> "(< " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
 
 let rec contraire t = 
+  (* Convertion d'un type Equals ou LessThan dans un String, en utilisant du matching et de
+    la méthode récursive str_of_term. Cette fois ici on renvoie le contraire d'égal et de lessthan, donc
+    not et greater then (>=)*)
   match t with 
   | Equals (t1, t2) -> "(not (" ^ str_of_term t1 ^ " " ^ str_of_term t2 ^"))"
   | LessThan(t1, t2) -> "(>= " ^ str_of_term t1 ^ " " ^ str_of_term t2 ^ ")"
@@ -66,6 +69,7 @@ let string_repeat s n =
    *)
 
 let create_tab_var n = 
+  (* Fonction auxilaire qui récoit un entier et créer une tableau de var qui va de Var 1 à Var n *)
   let rec loop n res = 
     match n with
     | 0 -> res
@@ -73,17 +77,18 @@ let create_tab_var n =
   in loop n [];;
 
 let create_tab_const n = 
+  (* Fonction auxilaire qui récoit un entier et créer une tableau de const *)
   let rec loop n res = 
     match n with
     | 0 -> res
     | _ -> loop (n-1) ((Const n) :: res)
   in loop n [];;
 
-let create_tab_of_term term size = 
+(* let create_tab_of_term term size = 
   match term with
   |Var x -> create_tab_var size
   |Const x -> create_tab_const size
-  | _  -> failwith "not valid term"
+  | _  -> failwith "not valid term" *)
 
 let str_condition l = 
   (* Dans un premier temps, ici on va creer un tab qui contient le contenu de l
@@ -100,6 +105,7 @@ let str_condition l =
     else 
       (* sinon on continue la recursivité avec le prochain element du tableau *)
       loop tab (res^" "^(List.nth tab counter)) (counter+1) in
+  (* le premier appel *)
   loop tab "(Invar" 0
 
 (* Question 3. Écrire une fonction 
@@ -114,12 +120,12 @@ let str_condition l =
 let str_assert s = "(assert " ^ s ^")"
 
 let create_variable n = 
-  (* Ici, nous avons une methode auxiliaire, qui creer pour le int n
-    son paremètre du type (x_n Int) *)
+  (* Ici, nous avons une methode auxiliaire, qui crée pour le int n
+    un paremètre du type (xn Int) *)
   "(x"^string_of_int(n)^" Int)"
   
 let create_variables n = 
-  (* Ici on va creer l'ensemble des paramètres (x_1 Int) ... (x_n Int) *)
+  (* Ici on va creer l'ensemble des paramètres (x1 Int) ... (xn Int) *)
   (* Pour cela on utilise d'un fonction recursive auxiliaire loop et de la
     méthode create_variable *)
   let rec loop result counter =
@@ -128,7 +134,8 @@ let create_variables n =
     (* Appel récursive sans space au début (premier appel) *) 
     if counter = 1 then loop (result^(create_variable counter)) (counter+1)
     (* Appel récursive avec space au début *)
-    else loop (result^" "^(create_variable counter)) (counter+1) 
+    else loop (result^" "^(create_variable counter)) (counter+1)
+  (* Premier appel *)
   in loop "(" 1
   
 
